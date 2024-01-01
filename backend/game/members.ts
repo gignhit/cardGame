@@ -2,7 +2,7 @@ import { CardsCollection } from "../gameComponents/CardCollection";
 import { Card } from "../gameComponents/Deck";
 
 export class PokerMember{
-    private _id :number;
+    private _id :string;
     private _hand :CardsCollection = new CardsCollection(2);
     private _inGame :boolean = true;
     private _money = 0;
@@ -10,7 +10,7 @@ export class PokerMember{
     get id(){ return this._id; }
     get hand(){ return this._hand; }
 
-    constructor(id: number){
+    constructor(id: string){
         this._id = id;
         this.receiveMoney();
     }
@@ -56,11 +56,11 @@ export class MembersList{
         this._list.push(member);
     }
 
-    delete(id :number){
+    delete(id :string){
         this._list.filter( m => m.id != id );
     }
 
-    getMember(user_id :number){
+    getMember(user_id :string){
         return this._list.find( m => m.id == user_id );
     }
 }

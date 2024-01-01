@@ -25,7 +25,7 @@ export class PokerManager{
         throw new Error(`game id ${game_id} not created`);
     }
 
-    addMember(game_id :number, user_id :number) :string{
+    addMember(game_id :number, user_id :string) :string{
         let game = this.getGame(game_id);
         if(game == null){
             throw new Error(`game id ${game_id} undefined`);
@@ -37,7 +37,7 @@ export class PokerManager{
         throw new Error(`game id ${game_id} already playing`);
     }
 
-    deleteMember(game_id :number, user_id :number):string{
+    deleteMember(game_id :number, user_id :string):string{
         let game = this.getGame(game_id);
         if(game == null){
             throw new Error(`game id ${game_id} undefined`);
@@ -47,7 +47,7 @@ export class PokerManager{
         return `user id : ${user_id} kicked in game id : ${game_id}`;
     }
 
-    action(game_id :number, user_id :number, act :string, bet :number|null = null):string[]{
+    action(game_id :number, user_id :string, act :string, bet :number|null = null):string[]{
         let game = this.getGame(game_id);
         if(game == null){
             throw new Error(`game id ${game_id} undefined`);
@@ -97,7 +97,7 @@ export class PokerManager{
         return game.table;
     }
 
-    getUser(game_id :number, user_id :number){
+    getUser(game_id :number, user_id :string){
         let game = this.getGame(game_id);
         if(game == null){
             throw new Error(`game id ${game_id} undefined`);
@@ -112,7 +112,7 @@ export class PokerManager{
         return member;
     }
 
-    getCombination(game_id :number, user_id :number){
+    getCombination(game_id :number, user_id :string){
         let game = this.getGame(game_id);
         if(game == null){
             throw new Error(`game id ${game_id} undefined`);
@@ -124,10 +124,7 @@ export class PokerManager{
             throw new Error(`user id not member game ${game_id}`);
         }
 
-        let res = game.findCombination(user_id);
-        
-
-        return res;
+        return game.findCombination(user_id);
     }
     
 

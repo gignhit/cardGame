@@ -22,12 +22,12 @@ class GameId{
 }
 
 class UserId{
-    private _value :number;
+    private _value :string;
     get value(){ return this._value; }
 
-    constructor(id :number){
+    constructor(id :string){
         if(id == undefined) throw new Error(`user_id undefined`);
-        if(typeof id != 'number') throw new Error(`user_id ${id} not int`);
+        if(typeof id != 'string') throw new Error(`user_id ${id} not int`);
         this._value = id;
     }
 }
@@ -66,13 +66,15 @@ pokerRouter.post('/subscribe-poker', (req, res) => {
 
 pokerRouter.post('/join', (req, res) => {
     let game_id :GameId;
-    let user_id :GameId;
+    let user_id :UserId;
 
     let messages :string[] = [];
 
     try{
         game_id = new GameId(req.body.game_id);
-        user_id = new GameId(req.body.user_id);
+        user_id = new UserId(req.body.user_id);
+
+        console.log(user_id.value)
 
         messages.push(poker.addMember(game_id.value, user_id.value));
     }catch(err :any){
@@ -101,7 +103,7 @@ pokerRouter.post('/start', (req, res) => {
 
 pokerRouter.post('/action', (req, res) => {
     let game_id :GameId;
-    let user_id :GameId;
+    let user_id :UserId;
     
     //!fix
     let action :string = req.body.action;
@@ -111,10 +113,11 @@ pokerRouter.post('/action', (req, res) => {
 
     try{
         game_id = new GameId(req.body.game_id);
-        user_id = new GameId(req.body.user_id);
+        user_id = new UserId(req.body.user_id);
 
         messages = [...poker.action(game_id.value, user_id.value, action, bet)];
         emitter.emit(game_id.value.toString(), messages);
+        res.status(200).send('ok');
     }catch(err :any){
         res.status(400).send(err.message);
         return;
@@ -125,7 +128,7 @@ pokerRouter.post('/action', (req, res) => {
 pokerRouter.get('/combination', (req, res) => {
     try{
         let game_id = new GameId(Number(req.query.game_id));
-        let user_id = new GameId(Number(req.query.user_id));
+        let user_id = new UserId(req.query.user_id!.toString());
 
         // console.log(game_id);
         // console.log(user_id);
@@ -153,7 +156,7 @@ pokerRouter.get('/table', (req, res) => {
 pokerRouter.get('/user', (req, res) => {
     try{
         let game_id = new GameId(Number(req.query.game_id));
-        let user_id = new GameId(Number(req.query.user_id));
+        let user_id = new UserId(req.query.user_id!.toString());
         res.json(poker.getUser(game_id.value, user_id.value));
     }catch(err :any){
         res.status(400).send(err.message);

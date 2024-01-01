@@ -1,4 +1,4 @@
-import { GuildMember } from "discord.js";
+import { GuildMember, User } from "discord.js";
 
 export class UserId{
     private _value: number;
@@ -11,7 +11,7 @@ export class UserId{
 
 class PokerSession{
     gameId :number;
-    users :Array<GuildMember> = [];
+    users :Array<User> = [];
 
     guildId :string;
 
@@ -42,11 +42,26 @@ class PokerSessions{
         this.sessions.push(new PokerSession(gameId, guidId));
     }
 
-    setUser(guidId :string, user :GuildMember){
+    setUser(guidId :string, user :User){
         let session = this.sessions.find( session => session.guildId == guidId);
-        if(session == null) return false;
+        if(session == null) return null;
         session.users.push(user);
-        return true;
+        return user.id;
+    }
+
+    getUser(guidId :string, userId :string){
+        let user :User | undefined;
+        this.sessions.forEach( session => {
+            if(session.guildId == guidId){
+                user = session.users.find( user => {
+                    console.log('finded ' + user.id);
+                    console.log('find ' + userId);
+
+                    return user.id == userId;
+                });
+            }
+        });
+        return user;
     }
 }
 

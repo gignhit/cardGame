@@ -59,11 +59,11 @@ export class Poker{
         });
     }
 
-    addMember(id :number){
+    addMember(id :string){
         this._membersList.add(new PokerMember(id));
     }
 
-    deleteMember(id :number){
+    deleteMember(id :string){
         this._membersList.delete(id);
     }
 
@@ -195,7 +195,7 @@ export class Poker{
         })
     }
 
-    check(user_id :number){
+    check(user_id :string){
         if(this.getCurrentRound().name == round.betting){
             throw new Error(`U can't do '${action.check}', u need do bet or wait`);
         }
@@ -204,7 +204,7 @@ export class Poker{
         return `user_id : ${user_id} - ${action.check}!`;
     }
 
-    bet(user_id :number, bet :number){
+    bet(user_id :string, bet :number){
         if(this.getCurrentRound().name == round.betting){
             throw new Error(`U can't do '${action.bet}', first bet already been`);
         }
@@ -215,7 +215,7 @@ export class Poker{
         return `user_id : ${user_id} - ${action.bet}!, bet = ${bet}`;
     }
 
-    call(user_id :number){
+    call(user_id :string){
         if(this.getCurrentRound().name != round.betting){
             throw new Error(`U can't do '${action.call}', no bets!`);
         }
@@ -227,7 +227,7 @@ export class Poker{
         return `user_id : ${user_id} - ${action.call}!`;
     }
 
-    raise(user_id :number, bet :number){
+    raise(user_id :string, bet :number){
         if(this.getCurrentRound().name != round.betting){
             return this.bet(user_id, bet)
         }
@@ -241,13 +241,13 @@ export class Poker{
         return `user_id : ${user_id} - ${action.raise}!, bet = ${bet}`;
     }
 
-    pass(user_id :number){
+    pass(user_id :string){
         this._membersList.delete(user_id);
         this.historyLogs();
         return `user_id : ${user_id} - ${action.pass}!`;
     }
 
-    findCombination(user_id :number){
+    findCombination(user_id :string){
         let memberCards = this._membersList.getMember(user_id)!.hand.cards;
         let tableCards = this._table.board.cards;
 

@@ -28,16 +28,16 @@ export class PokerBot{
     
         this.client.on('interactionCreate', async interaction => {
             if (!interaction.isChatInputCommand()) return;
-            new Command().create(interaction.options.getSubcommand())?.execute(interaction);
+            new Command().create(interaction.options.getSubcommand())!.execute(interaction);
 
-            API.poker.subscribe(pokerSessions.getGameIdByGuildId(interaction.guildId!)!)
-                .then( res => {
-                    interaction.channel!.send({content: JSON.stringify(res.data) + ' subscribe'});
-                })
-                .catch( err => {
-                    console.log(err.message);
-                    // interaction.channel!.send({content: err.message + ' subscribe'});
-                });
+            // API.poker.subscribe(pokerSessions.getGameIdByGuildId(interaction.guildId!)!)
+            //     .then( res => {
+            //         interaction.channel!.send({content: JSON.stringify(res.data) + ' subscribe'});
+            //     })
+            //     .catch( err => {
+            //         console.log(err.message);
+            //         // interaction.channel!.send({content: err.message + ' subscribe'});
+            //     });
         });
     
         this._commands.addSubcommand( () => CreateCommand.subCommand);

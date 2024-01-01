@@ -79,7 +79,7 @@ export class StartCommand extends ICommand{
             return;
         }
 
-        API.poker.start(gameId)
+        API.poker.start(gameId, interaction)
             .then( () => {
                 interaction.reply({content: 'You started game', ephemeral: true});
             })
@@ -112,9 +112,13 @@ export class JoinCommand extends ICommand{
             return;
         }
 
-        pokerSessions.setUser(interaction.guildId!, member);
+        console.log('\bset user before '+ member.id);
+        
+        let userId = pokerSessions.setUser(interaction.guildId!, member.user);
 
-        API.poker.join(gameId, Number(member.id))            
+        console.log('\bset user after '+ userId);
+
+        API.poker.join(gameId, member.id, interaction)            
             .then( () => {
                 interaction.reply({content: 'You joined game', ephemeral: true});
             })
@@ -146,8 +150,10 @@ export class CheckCommand extends ICommand{
             interaction.reply('You not a member in any game');
             return;
         }
+
+        console.log(gameId);
         
-        API.poker.check(gameId, Number(member.id))
+        API.poker.check(gameId, member.id, interaction)
             .then( () => {
                 interaction.reply({content: 'do check succ', ephemeral: true});
             })
@@ -185,7 +191,7 @@ export class BetCommand extends ICommand{
             return;
         }
 
-        API.poker.bet(gameId, Number(member.id), interaction.options.getNumber('bet_value')!)
+        API.poker.bet(gameId, member.id, interaction.options.getNumber('bet_value')!, interaction)
             .then( () => {
                 interaction.reply({content: 'do check succ', ephemeral: true});
             })
@@ -223,7 +229,7 @@ export class RaiseCommand extends ICommand{
             return;
         }
 
-        API.poker.raise(gameId, Number(member.id), interaction.options.getNumber('bet_value')!)
+        API.poker.raise(gameId, member.id, interaction.options.getNumber('bet_value')!, interaction)
             .then( () => {
                 interaction.reply({content: 'do check succ', ephemeral: true});
             })
@@ -255,7 +261,7 @@ export class CallCommand extends ICommand{
             return;
         }
         
-        API.poker.call(gameId, Number(member.id))
+        API.poker.call(gameId, member.id, interaction)
             .then( () => {
                 interaction.reply({content: 'do call succ', ephemeral: true});
             })
@@ -287,7 +293,7 @@ export class PassCommand extends ICommand{
             return;
         }
         
-        API.poker.pass(gameId, Number(member.id))
+        API.poker.pass(gameId, member.id, interaction)
             .then( () => {
                 interaction.reply({content: 'do pass succ', ephemeral: true});
             })
@@ -319,7 +325,7 @@ export class CombinationCommand extends ICommand{
             return;
         }
         
-        API.poker.getCombination(gameId, Number(member.id))
+        API.poker.getCombination(gameId, member.id)
             .then( res => {
                 interaction.reply({content: JSON.stringify(res.data), ephemeral: true});
             })

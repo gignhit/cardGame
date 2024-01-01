@@ -20,7 +20,7 @@ export class Round{
         this._members = [];
     }
 
-    addAction(user_id :number, action :action, bet :number|null = null){
+    addAction(user_id :string, action :action, bet :number|null = null){
         this._members.push(new Action(user_id, action, bet));
     }
 }
@@ -34,13 +34,13 @@ export enum action{
 }
 
 export class Action{
-    private user_id: number;
+    private user_id :string;
     private action :action;
     private _bet :number|null = null;
 
     get bet(){ return this._bet; }
 
-    constructor(user_id :number, action :action, bet :number|null){
+    constructor(user_id :string, action :action, bet :number|null){
         this.user_id = user_id;
         this.action = action;
         this._bet = bet;
