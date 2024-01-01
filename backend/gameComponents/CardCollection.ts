@@ -25,9 +25,9 @@ export class CardsCollection{
         if(this._size + 1 <= this._maxsize){
             this._size = this._collection.push(card);
             return this._collection.length;
-        } else {
-            throw new Error("max cards amount in hand!");
-        }
+        } 
+
+        throw new Error("max cards amount in hand!");
     }
 
     public pop(){
