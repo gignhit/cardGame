@@ -33,6 +33,14 @@ export class Command{
                 return new GetTableCommand();
             case GetUser.CommandName:
                 return new GetUser();
+            case GetUserCards.CommandName:
+                return new GetUserCards();
+            case GetUserMoney.CommandName:
+                return new GetUserMoney();
+            case GetBankCommand.CommandName:
+                return new GetBankCommand();
+            case GetTableCardsCommand.CommandName:
+                return new GetTableCardsCommand();
 
             default:
                 throw new Error(`commandName ${commandName} undefined`);
@@ -158,6 +166,7 @@ export class CheckCommand extends ICommand{
                 interaction.reply({content: 'do check succ', ephemeral: true});
             })
             .catch( err => {
+                console.log(err.message);
                 interaction.reply({content: err.message, ephemeral: true});
             });
     }
@@ -367,6 +376,89 @@ export class GetTableCommand extends ICommand{
     }
 }
 
+export class GetTableCardsCommand extends ICommand{
+    static CommandName: string = 'table_cards';
+
+    static get subCommand(){ 
+        return new SlashCommandSubcommandBuilder()
+            .setName('table_cards')
+            .setDescription('check table cards');
+    }
+
+    private replaceCardsView(cards :Array<{_ownerId :null, _suit :string, _rank :number}>){
+        let res = '';
+
+        if(cards.length < 1){
+            return 'none';
+        }
+
+        cards.forEach( card => {
+            if(card._rank == 13){
+                res += ':black_joker: ';
+                return;
+            }
+            res += CardsRank[card._rank] + CardsSuit[card._suit as keyof typeof CardsSuit] + ' ';
+        });
+
+        return res;
+    }
+
+    execute(interaction :ChatInputCommandInteraction): void {
+        let member = interaction.member;
+        if(!(member instanceof GuildMember)){
+            interaction.reply({content: 'user_id err', ephemeral: true});
+            return;
+        }
+
+        let gameId = pokerSessions.getGameIdByUserId(member);
+        if(gameId == undefined){
+            interaction.reply('You not a member in any game');
+            return;
+        }
+        
+        API.poker.getTable(gameId)
+            .then( res => {
+                interaction.reply({content: this.replaceCardsView(res.data._board._collection), ephemeral: true});
+            })
+            .catch( err => {
+                interaction.reply({content: err.message, ephemeral: true});
+            });
+    }
+}
+
+export class GetBankCommand extends ICommand{
+    static CommandName: string = 'bank';
+
+    static get subCommand(){ 
+        return new SlashCommandSubcommandBuilder()
+            .setName('bank')
+            .setDescription('check bank');
+    }
+
+
+    execute(interaction :ChatInputCommandInteraction): void {
+        let member = interaction.member;
+        if(!(member instanceof GuildMember)){
+            interaction.reply({content: 'user_id err', ephemeral: true});
+            return;
+        }
+
+        let gameId = pokerSessions.getGameIdByUserId(member);
+        if(gameId == undefined){
+            interaction.reply('You not a member in any game');
+            return;
+        }
+        
+        API.poker.getTable(gameId)
+            .then( res => {
+                interaction.reply({content: res.data._bank, ephemeral: true});
+            })
+            .catch( err => {
+                interaction.reply({content: err.message, ephemeral: true});
+            });
+    }
+}
+
 
 export class GetUser extends ICommand{
     static CommandName: string = 'user';
@@ -393,6 +485,138 @@ export class GetUser extends ICommand{
         API.poker.getUser(gameId, member.id)
             .then( res => {
                 interaction.reply({content: JSON.stringify(res.data), ephemeral: true});
+            })
+            .catch( err => {
+                interaction.reply({content: err.message, ephemeral: true});
+            });
+    }
+}
+
+enum CardsRank{
+    ':two:',
+    ':three:',
+    ':four:',
+    ':five:',
+    ':six:',
+    ':seven:',
+    ':eight:',
+    ':nine:',
+    ':keycap_ten:',
+    ':regional_indicator_j:',
+    ':regional_indicator_q:',
+    ':regional_indicator_k:',
+    ':regional_indicator_a:',
+}
+
+enum CardsSuit{
+    Hearts = ':hearts:',
+    Clubs = ':clubs:',
+    Spades = ':spades:',
+    Diamonds = ':diamonds:'
+}
+
+export class GetUserCards extends ICommand{
+    static CommandName: string = 'my_cards';
+
+    static get subCommand(){ 
+        return new SlashCommandSubcommandBuilder()
+            .setName('my_cards')
+            .setDescription('check user cards');
+    }
+
+    // private replaceCardsView(cards :Array<{_ownerId :null, _suit :string, _rank :number}>){
+    //     let res = '';
+
+    //     cards.forEach( card => {
+    //         if(card._rank == 13){
+    //             res += ':black_joker: ';
+    //             return;
+    //         }
+
+    //         // let s:string;
+
+    //         // const suit: CardsSuit = card._suit as CardsSuit;
+
+    //         // switch(suit){
+    //         //     case CardsSuit.Hearts:
+    //         //         s = CardsSuit.Hearts;
+    //         //     case CardsSuit.Clubs:
+    //         //         s = CardsSuit.Clubs;
+    //         //     case CardsSuit.Spades:
+    //         //         s = CardsSuit.Spades;
+    //         //     case CardsSuit.Diamonds:
+    //         //         s = CardsSuit.Diamonds;
+    //         // }
+
+    //         // res += CardsRank[card._rank] + s + ' ';
+    //     });
+
+    //     return res;
+    // }
+
+    private replaceCardsView(cards :Array<{_ownerId :null, _suit :string, _rank :number}>){
+        let res = '';
+
+        cards.forEach( card => {
+            if(card._rank == 13){
+                res += ':black_joker: ';
+                return;
+            }
+            res += CardsRank[card._rank] + CardsSuit[card._suit as keyof typeof CardsSuit] + ' ';
+        });
+
+        return res;
+    }
+
+    execute(interaction :ChatInputCommandInteraction): void {
+        let member = interaction.member;
+        if(!(member instanceof GuildMember)){
+            interaction.reply({content: 'user_id err', ephemeral: true});
+            return;
+        }
+
+        let gameId = pokerSessions.getGameIdByGuildId(interaction.guildId!);
+        if(gameId == undefined){
+            interaction.reply('You not a member in any game');
+            return;
+        }
+        
+        API.poker.getUser(gameId, member.id)
+            .then( res => {
+                interaction.reply({content: this.replaceCardsView(res.data._hand._collection), ephemeral: true});
+            })
+            .catch( err => {
+                interaction.reply({content: err.message, ephemeral: true});
+            });
+    }
+}
+
+export class GetUserMoney extends ICommand{
+    static CommandName: string = 'my_money';
+
+    static get subCommand(){ 
+        return new SlashCommandSubcommandBuilder()
+            .setName('my_money')
+            .setDescription('check user money');
+    }
+
+
+    execute(interaction :ChatInputCommandInteraction): void {
+        let member = interaction.member;
+        if(!(member instanceof GuildMember)){
+            interaction.reply({content: 'user_id err', ephemeral: true});
+            return;
+        }
+
+        let gameId = pokerSessions.getGameIdByGuildId(interaction.guildId!);
+        if(gameId == undefined){
+            interaction.reply('You not a member in any game');
+            return;
+        }
+        
+        API.poker.getUser(gameId, member.id)
+            .then( res => {
+                interaction.reply({content: res.data._money.toString(), ephemeral: true});
             })
             .catch( err => {
                 interaction.reply({content: err.message, ephemeral: true});

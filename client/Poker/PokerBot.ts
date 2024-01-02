@@ -3,7 +3,23 @@ import {
 	Client, 
 	GatewayIntentBits 
 } from 'discord.js';
-import { BetCommand, CallCommand, CheckCommand, CombinationCommand, Command, CreateCommand, GetTableCommand, GetUser, JoinCommand, PassCommand, RaiseCommand, StartCommand} from './PokerCommands';
+import { 
+    BetCommand, 
+    CallCommand, 
+    CheckCommand, 
+    CombinationCommand, 
+    Command, CreateCommand, 
+    GetBankCommand, 
+    GetTableCardsCommand, 
+    GetTableCommand, 
+    GetUser, 
+    GetUserCards, 
+    GetUserMoney, 
+    JoinCommand, 
+    PassCommand, 
+    RaiseCommand, 
+    StartCommand
+} from './PokerCommands';
 import { API } from '../api/api';
 import { pokerSessions } from './PokerSessions';
 
@@ -51,5 +67,10 @@ export class PokerBot{
         this._commands.addSubcommand( () => CombinationCommand.subCommand);
         this._commands.addSubcommand( () => GetTableCommand.subCommand);
         this._commands.addSubcommand( () => GetUser.subCommand);
+        this._commands.addSubcommand( () => GetUserCards.subCommand);
+        this._commands.addSubcommand( () => GetUserMoney.subCommand);
+        this._commands.addSubcommand( () => GetBankCommand.subCommand);
+        this._commands.addSubcommand( () => GetTableCardsCommand.subCommand);
+
     }
 }

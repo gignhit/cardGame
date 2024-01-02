@@ -55,7 +55,8 @@ class PokerAPI{
             if(message.match(userIdWord) != null){
                 let user_id = message.match(userIdStr)![0].trim();
                 console.log(pokerSessions.getUser(interaction.guild!.id, user_id)!.username);
-                message = message.replace(userIdWord, `${pokerSessions.getUser(interaction.guild!.id, user_id)!.globalName}`);
+                message = message.replace(userIdWord, `${pokerSessions.getUser(interaction.guild!.id, user_id)!.username}`);
+                
             }
             interaction.channel!.send({content: message});
         });

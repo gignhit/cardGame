@@ -166,7 +166,7 @@ export class Poker{
         this.table.cleanTable();
         user.finishGame();
         
-        return `Winner ${user.id} have bank ${this._table.bank}`;
+        return `Winner user id : ${user.id} have bank ${this._table.bank}`;
     }
 
     
@@ -244,6 +244,11 @@ export class Poker{
     pass(user_id :string){
         this._membersList.delete(user_id);
         this.historyLogs();
+
+        if(this.membersList.size == 1){
+            return this.ending(this._membersList.list[0]);
+        }
+
         return `user id : ${user_id} - ${action.pass}!`;
     }
 
@@ -261,9 +266,6 @@ export class Poker{
                 }
                 return 0;
             });
-
-        console.log(cards);
-        console.log('');
 
         let combinationFinders = new Map<combination, Card[]>([
             [combination.hightCard, this.findHightCard(memberCards)],
