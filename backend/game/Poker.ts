@@ -201,7 +201,7 @@ export class Poker{
         }
         this.getCurrentRound().addAction(user_id, action.check);
         this.historyLogs();
-        return `user_id : ${user_id} - ${action.check}!`;
+        return `user id : ${user_id} - ${action.check}!`;
     }
 
     bet(user_id :string, bet :number){
@@ -212,7 +212,7 @@ export class Poker{
         this.roudsHistory.push(new Round(round.betting));
         this.getCurrentRound().addAction(user_id, action.bet, bet);
         this.historyLogs();
-        return `user_id : ${user_id} - ${action.bet}!, bet = ${bet}`;
+        return `user id : ${user_id} - ${action.bet}!, bet = ${bet}`;
     }
 
     call(user_id :string){
@@ -224,7 +224,7 @@ export class Poker{
         this._table.addBet(user_id, this._membersList.getMember(user_id)!.doBet(previosBet!));
         this.getCurrentRound().addAction(user_id, action.call, previosBet);
         this.historyLogs();
-        return `user_id : ${user_id} - ${action.call}!`;
+        return `user id : ${user_id} - ${action.call}!`;
     }
 
     raise(user_id :string, bet :number){
@@ -238,13 +238,13 @@ export class Poker{
         this.roudsHistory.push(new Round(round.betting));
         this.getCurrentRound().addAction(user_id, action.raise, bet);
         this.historyLogs();
-        return `user_id : ${user_id} - ${action.raise}!, bet = ${bet}`;
+        return `user id : ${user_id} - ${action.raise}!, bet = ${bet}`;
     }
 
     pass(user_id :string){
         this._membersList.delete(user_id);
         this.historyLogs();
-        return `user_id : ${user_id} - ${action.pass}!`;
+        return `user id : ${user_id} - ${action.pass}!`;
     }
 
     findCombination(user_id :string){

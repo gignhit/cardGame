@@ -26,8 +26,8 @@ class UserId{
     get value(){ return this._value; }
 
     constructor(id :string){
-        if(id == undefined) throw new Error(`user_id undefined`);
-        if(typeof id != 'string') throw new Error(`user_id ${id} not int`);
+        if(id == undefined) throw new Error(`user id undefined`);
+        if(typeof id != 'string') throw new Error(`user id ${id} not int`);
         this._value = id;
     }
 }

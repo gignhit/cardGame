@@ -390,7 +390,7 @@ export class GetUser extends ICommand{
             return;
         }
         
-        API.poker.getTable(gameId)
+        API.poker.getUser(gameId, member.id)
             .then( res => {
                 interaction.reply({content: JSON.stringify(res.data), ephemeral: true});
             })
