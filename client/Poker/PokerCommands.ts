@@ -48,6 +48,43 @@ export class Command{
     }
 }
 
+enum CardsRank{
+    ':two:',
+    ':three:',
+    ':four:',
+    ':five:',
+    ':six:',
+    ':seven:',
+    ':eight:',
+    ':nine:',
+    ':keycap_ten:',
+    ':regional_indicator_j:',
+    ':regional_indicator_q:',
+    ':regional_indicator_k:',
+    ':regional_indicator_a:',
+}
+
+enum CardsSuit{
+    'Hearts' = ':hearts:',
+    'Clubs' = ':clubs:',
+    'Spades' = ':spades:',
+    'Diamonds' = ':diamonds:'
+}
+
+function replaceCardsView(cards :Array<{rank :number, suit :string}>){
+    let result = '';
+
+    cards.forEach( card => {
+        if(card.rank == 13){
+            result += ':black_joker: ';
+            return;
+        }
+        result += CardsRank[card.rank] + CardsSuit[card.suit as keyof typeof CardsSuit] + ' ';
+    });
+
+    return result;
+}
+
 export class CreateCommand extends ICommand{
     static CommandName: string = 'create';
 
@@ -65,6 +102,7 @@ export class CreateCommand extends ICommand{
                 interaction.reply(res.data.toString());
             })
             .catch( err => {
+                console.log(err.message);
                 interaction.reply({content: JSON.stringify(err.message), ephemeral: true});
             });
     }
@@ -92,6 +130,7 @@ export class StartCommand extends ICommand{
                 interaction.reply({content: 'You started game', ephemeral: true});
             })
             .catch( err => {
+                console.log(err.message);
                 interaction.reply({content: JSON.stringify(err.message), ephemeral: true});
             });
     }
@@ -131,6 +170,7 @@ export class JoinCommand extends ICommand{
                 interaction.reply({content: 'You joined game', ephemeral: true});
             })
             .catch( err => {
+                console.log(err.message);
                 interaction.reply({content: JSON.stringify(err.message), ephemeral: true});
             });
     }
@@ -205,6 +245,7 @@ export class BetCommand extends ICommand{
                 interaction.reply({content: 'do check succ', ephemeral: true});
             })
             .catch( err => {
+                console.log(err.message);
                 interaction.reply({content: err.message, ephemeral: true});
             });
     }
@@ -243,6 +284,7 @@ export class RaiseCommand extends ICommand{
                 interaction.reply({content: 'do check succ', ephemeral: true});
             })
             .catch( err => {
+                console.log(err.message);
                 interaction.reply({content: err.message, ephemeral: true});
             });
     }
@@ -275,6 +317,7 @@ export class CallCommand extends ICommand{
                 interaction.reply({content: 'do call succ', ephemeral: true});
             })
             .catch( err => {
+                console.log(err.message);
                 interaction.reply({content: err.message, ephemeral: true});
             });
     }
@@ -307,6 +350,7 @@ export class PassCommand extends ICommand{
                 interaction.reply({content: 'do pass succ', ephemeral: true});
             })
             .catch( err => {
+                console.log(err.message);
                 interaction.reply({content: err.message, ephemeral: true});
             });
     }
@@ -336,7 +380,10 @@ export class CombinationCommand extends ICommand{
         
         API.poker.getCombination(gameId, member.id)
             .then( res => {
-                interaction.reply({content: JSON.stringify(res.data), ephemeral: true});
+                let cards = replaceCardsView(res.data.cards);
+                let combination = res.data.combination;
+
+                interaction.reply({content: `Your cards - ${cards}, combination: ${combination}`, ephemeral: true});
             })
             .catch( err => {
                 interaction.reply({content: err.message, ephemeral: true});
@@ -385,23 +432,6 @@ export class GetTableCardsCommand extends ICommand{
             .setDescription('check table cards');
     }
 
-    private replaceCardsView(cards :Array<{_ownerId :null, _suit :string, _rank :number}>){
-        let res = '';
-
-        if(cards.length < 1){
-            return 'none';
-        }
-
-        cards.forEach( card => {
-            if(card._rank == 13){
-                res += ':black_joker: ';
-                return;
-            }
-            res += CardsRank[card._rank] + CardsSuit[card._suit as keyof typeof CardsSuit] + ' ';
-        });
-
-        return res;
-    }
 
     execute(interaction :ChatInputCommandInteraction): void {
         let member = interaction.member;
@@ -418,7 +448,7 @@ export class GetTableCardsCommand extends ICommand{
         
         API.poker.getTable(gameId)
             .then( res => {
-                interaction.reply({content: this.replaceCardsView(res.data._board._collection), ephemeral: true});
+                interaction.reply({content: replaceCardsView(res.data.board), ephemeral: true});
             })
             .catch( err => {
                 interaction.reply({content: err.message, ephemeral: true});
@@ -451,7 +481,7 @@ export class GetBankCommand extends ICommand{
         
         API.poker.getTable(gameId)
             .then( res => {
-                interaction.reply({content: res.data._bank, ephemeral: true});
+                interaction.reply({content: res.data.bank, ephemeral: true});
             })
             .catch( err => {
                 interaction.reply({content: err.message, ephemeral: true});
@@ -492,28 +522,7 @@ export class GetUser extends ICommand{
     }
 }
 
-enum CardsRank{
-    ':two:',
-    ':three:',
-    ':four:',
-    ':five:',
-    ':six:',
-    ':seven:',
-    ':eight:',
-    ':nine:',
-    ':keycap_ten:',
-    ':regional_indicator_j:',
-    ':regional_indicator_q:',
-    ':regional_indicator_k:',
-    ':regional_indicator_a:',
-}
 
-enum CardsSuit{
-    Hearts = ':hearts:',
-    Clubs = ':clubs:',
-    Spades = ':spades:',
-    Diamonds = ':diamonds:'
-}
 
 export class GetUserCards extends ICommand{
     static CommandName: string = 'my_cards';
@@ -522,50 +531,6 @@ export class GetUserCards extends ICommand{
         return new SlashCommandSubcommandBuilder()
             .setName('my_cards')
             .setDescription('check user cards');
-    }
-
-    // private replaceCardsView(cards :Array<{_ownerId :null, _suit :string, _rank :number}>){
-    //     let res = '';
-
-    //     cards.forEach( card => {
-    //         if(card._rank == 13){
-    //             res += ':black_joker: ';
-    //             return;
-    //         }
-
-    //         // let s:string;
-
-    //         // const suit: CardsSuit = card._suit as CardsSuit;
-
-    //         // switch(suit){
-    //         //     case CardsSuit.Hearts:
-    //         //         s = CardsSuit.Hearts;
-    //         //     case CardsSuit.Clubs:
-    //         //         s = CardsSuit.Clubs;
-    //         //     case CardsSuit.Spades:
-    //         //         s = CardsSuit.Spades;
-    //         //     case CardsSuit.Diamonds:
-    //         //         s = CardsSuit.Diamonds;
-    //         // }
-
-    //         // res += CardsRank[card._rank] + s + ' ';
-    //     });
-
-    //     return res;
-    // }
-
-    private replaceCardsView(cards :Array<{_ownerId :null, _suit :string, _rank :number}>){
-        let res = '';
-
-        cards.forEach( card => {
-            if(card._rank == 13){
-                res += ':black_joker: ';
-                return;
-            }
-            res += CardsRank[card._rank] + CardsSuit[card._suit as keyof typeof CardsSuit] + ' ';
-        });
-
-        return res;
     }
 
     execute(interaction :ChatInputCommandInteraction): void {
@@ -583,7 +548,7 @@ export class GetUserCards extends ICommand{
         
         API.poker.getUser(gameId, member.id)
             .then( res => {
-                interaction.reply({content: this.replaceCardsView(res.data._hand._collection), ephemeral: true});
+                interaction.reply({content: replaceCardsView(res.data.hand), ephemeral: true});
             })
             .catch( err => {
                 interaction.reply({content: err.message, ephemeral: true});
@@ -600,7 +565,6 @@ export class GetUserMoney extends ICommand{
             .setDescription('check user money');
     }
 
-
     execute(interaction :ChatInputCommandInteraction): void {
         let member = interaction.member;
         if(!(member instanceof GuildMember)){
@@ -616,7 +580,7 @@ export class GetUserMoney extends ICommand{
         
         API.poker.getUser(gameId, member.id)
             .then( res => {
-                interaction.reply({content: res.data._money.toString(), ephemeral: true});
+                interaction.reply({content: res.data.money.toString(), ephemeral: true});
             })
             .catch( err => {
                 interaction.reply({content: err.message, ephemeral: true});

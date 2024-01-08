@@ -2,8 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import events  from 'events';
 
-import { pokerRouter } from './api/poker';
 import { userRouter } from './api/user';
+import { pokerRouter } from './api/poker/api';
 
 
 

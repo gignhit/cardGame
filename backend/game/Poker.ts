@@ -1,4 +1,4 @@
-import { emitter } from "../api/poker";
+import { emitter } from "../api/poker/api";
 import { DB } from "../db/db";
 
 import { Card, CardRank, Deck } from "../gameComponents/Deck";
@@ -174,9 +174,9 @@ export class Poker{
         let lastRound = this.roudsHistory.slice(-1)[0];
         if(lastRound.name == round.betting && lastRound.actions.length >= this._membersList.size){
             let notBetRound = this.roudsHistory
-                    .slice()
-                    .reverse()
-                    .find( r => r.name != round.betting);
+                .slice()
+                .reverse()
+                .find( r => r.name != round.betting);
 
             if(notBetRound == null) throw new Error(`round undefined`);
             return notBetRound;

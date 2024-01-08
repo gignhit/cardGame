@@ -9,6 +9,8 @@ export class PokerMember{
 
     get id(){ return this._id; }
     get hand(){ return this._hand; }
+    get money (){ return this._money; }
+
 
     constructor(id: string){
         this._id = id;
